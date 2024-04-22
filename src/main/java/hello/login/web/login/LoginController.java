@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import hello.login.domain.login.LoginService;
 import hello.login.domain.member.Member;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ public class LoginController {
 	}
 	
 	@PostMapping("/login")
-	public String login(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult) {
+	public String login(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult, HttpServletResponse response) {
 		if(bindingResult.hasErrors()) {
 			return "login/loginForm";
 		}
@@ -37,16 +39,24 @@ public class LoginController {
 			return "login/loginForm";
 		}
 		
-		//로그인 성공 처리 TODO
+		//로그인 성공 처리
+		Cookie idCookie = new Cookie("memberId", String.valueOf(loginMember.getId()));
+		response.addCookie(idCookie);
 		
 		return "redirect:/";
-		
 	}
 	
+	@PostMapping("/logout")
+	public String logout(HttpServletResponse response) {
+		Cookie cookie = new Cookie("memberId", null);
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
+		return "redirect:/";
+	}
+		
+		
+	
 }
-
-
-
 
 
 

@@ -9,7 +9,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import hello.login.web.filter.LogFilter;
 import hello.login.web.filter.LoginCheckFilter;
 import hello.login.web.interceptor.LogInterceptor;
+import hello.login.web.interceptor.LoginCheckInterceptor;
 import jakarta.servlet.Filter;
+
+// LogInterceptor 와 LoginCheckInterceptor를 여기서 등록한다.
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -21,7 +24,10 @@ public class WebConfig implements WebMvcConfigurer {
 			.addPathPatterns("/**")
 			.excludePathPatterns("/css/**", "/*.ico", "/error");
 		
-		
+		registry.addInterceptor(new LoginCheckInterceptor())
+			.order(2)
+			.addPathPatterns("/**")
+			.excludePathPatterns("/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error");
 	}
 	
 	//@Bean
@@ -35,7 +41,7 @@ public class WebConfig implements WebMvcConfigurer {
 		
 	}
 	
-	@Bean
+	//@Bean
 	public FilterRegistrationBean loginCheckFilter() {
 		FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
 		filterRegistrationBean.setFilter(new LoginCheckFilter());
